@@ -11,12 +11,12 @@ This document outlines the step-by-step execution plan to build MedMentor AI (Fu
 ## 1. Executive Summary & Timeline
 
 **Goal:** Launch Production Release in ~18-20 weeks.
-**Focus:** **Agent-First Architecture** — All backend capabilities delivered through Google ADK agents.
-**Critical Path:** Auth → ADK Agent Infrastructure → Core Agents → Learning Engine → Web Client.
+**Focus:** **Research-First AI Agents** — Empowering learners through deep research specialists integrated with a chat-first UI.
+**Critical Path:** Auth → AI Research Agent Infrastructure → Core Search Agents → Learning Engine → Web Client.
 
 ### Key Architectural Shift
 - **FROM:** Traditional API with AI features
-- **TO:** AI Agent Orchestrator (Google ADK) coordinating all backend operations
+- **TO:** Integrated AI Research Agents coordinating all tasks through deep search and synthesis.
 - **A2A Protocol:** Agent-to-Agent communication for scalability and modularity
 - **Agent Studio:** User-creatable agents in v0.1
 
@@ -24,12 +24,12 @@ This document outlines the step-by-step execution plan to build MedMentor AI (Fu
 | Phase | Focus | Duration | Key Deliverables |
 | :--- | :--- | :--- | :--- |
 | **1** | **Foundation** | W1-2 | Repo, Infrastructure, DB, Auth, Design Tokens |
-| **2** | **ADK Agent Infrastructure** | W3-4 | Google ADK setup, Supervisor Agent, Tool Layer, A2A setup |
-| **3** | **Core Learning Agents** | W5-8 | Tutor, Retrieval, Safety, Quiz, Flashcard Agents |
-| **4** | **Agent Studio** | W9-10 | Agent Builder UI, Templates, Testing, Sharing |
-| **5** | **Tool Integration & A2A** | W11-12 | MCP (optional), A2A remote agents, Calendar, Search |
-| **6** | **Web Client** | W13-15 | Dashboard, Study Interfaces, Library |
-| **7** | **Mobile & Extension** | W16-18 | Mobile App, Browser Extension |
+| **2** | **AI Agent Infrastructure & Search** | W3-4 | Google ADK, Supervisor, Internet Search & Deep Research Tools |
+| **3** | **Core Research Agents** | W5-8 | Tutor (Search-linked), Retrieval (Web-First), Safety, Quiz, Flashcard |
+| **4** | **Chat-First Web Client** | W9-11 | Integrated Chat UI, Research Drawer, Dashboards |
+| **5** | **Document Ingestion (Additional)** | W12-13 | OCR/Parsing, Vector Search from user documents, personalization |
+| **6** | **Agent Studio & A2A** | W14-16 | Agent Builder UI, Sharing, A2A Remote Agents |
+| **7** | **Mobile & Extension** | W17-18 | Mobile App, Browser Extension |
 | **8** | **Polish & Launch** | W19-20 | Security Audit, Load Testing, Production Deploy |
 
 ---
@@ -42,21 +42,27 @@ This document outlines the step-by-step execution plan to build MedMentor AI (Fu
     - `apps/mobile` (React Native/Expo)
     - `apps/extension` (Chrome/Edge)
     - `packages/ui` (Shared Design System)
-    - `packages/api` (Backend/Node.js)
-    - `packages/core` (Shared Logic/Types)
+    - `services/api` (Go/Chi Gateway)
+    - `services/agents` (Go/Genkit Agent Runners)
+    - `packages/shared-types` (TypeScript/gRPC protos)
 - [ ] Configure `eslint`, `prettier`, `typescript` (Strict Mode).
 - [ ] Set up pre-commit hooks (Husky).
 
-### 1.2 Infrastructure (VPS Setup)
-- [ ] Provision **Hostinger VPS** (Ubuntu/Docker environment).
-- [ ] Configure **Docker & Docker Compose** for service orchestration.
-- [ ] Set up **PostgreSQL** (Self-hosted on VPS).
-- [ ] Set up **Vector Database** (pgvector on VPS or self-hosted Milvus).
+### 1.2 Infrastructure (Kubernetes Setup)
+- [ ] Provision **Kubernetes Cluster** (GKE, EKS, or Managed K8s).
+- [ ] Set up **Terraform/Pulumi** for IaC (Infrastructure as Code).
+- [ ] Configure **Helm** for service deployments.
+- [ ] Provision **NATS JetStream** (3-node cluster) for durable event bus.
+- [ ] Set up **Redis** (for Supervisor session state and ratelimiting).
+- [ ] Define **AgentContext Protobuf/JSON Schema** for standardized inter-agent communication.
+- [ ] Set up **PostgreSQL (HA)** with pgvector.
 - [ ] Set up **Object Storage** (Cloudflare R2).
-- [ ] Set up **Reverse Proxy** (Nginx/Traefik) with SSL (Let's Encrypt).
+- [ ] Set up **Ingress Controller** (Nginx/Traefik) with SSL.
+- [ ] Set up **Horizontal Pod Autoscaling (HPA)** base configuration.
 - [ ] Set up **CI/CD Pipelines** (GitHub Actions):
     - Lint/Test on PR.
-    - Build & Deploy via SSH to VPS on merge to `main`.
+    - Build & Push Docker images to Registry (GHCR/GCR).
+    - Deploy to K8s via Helm on merge to `main`.
 
 ### 1.3 Design System Implementation
 - [ ] Create `packages/ui` library.
@@ -76,42 +82,44 @@ This document outlines the step-by-step execution plan to build MedMentor AI (Fu
     - Configure OAuth (Google, Apple, Microsoft).
 - [ ] Define `User` schema in Postgres.
     - Fields: `email`, `preferences` (locale, timezone), `subscription_status`.
+- [ ] Implement **Offline Storage Bridge**: SQLite/RxDB foundation for local sync.
 
 ---
 
-## Phase 2: ADK Agent Infrastructure (Weeks 3-4)
+## Phase 2: AI Agent Infrastructure & Search (Weeks 3-4)
 
-### 2.1 Google ADK Setup
-- [ ] Install and configure **Google ADK** (Python or TypeScript)
-- [ ] Set up **Vertex AI** integration with model router (LiteLLM for multi-provider)
-- [ ] Configure **A2A protocol** for agent-to-agent communication
-- [ ] Set up **ADK Tool Layer** (database, vector search, file storage tools)
-- [ ] Implement **model router** with fallback logic
+### 2.1 Google Genkit & Event Implementation (Go)
+- [ ] Initialize Go Workspace for backend services.
+- [ ] Install and configure **Google Genkit (Go SDK)**.
+- [ ] Set up **Vertex AI** integration (Gemini models via Go SDK).
+- [ ] Implement **Go Event Consumers** (Goroutine pools for Redis Streams/NATS).
+- [ ] Implement **Model Router Service** (Stateless Go service with YAML-based provider config).
+- [ ] Implement **Safety Service** (Go) as a mandatory gateway for all external agent outputs.
+- [ ] Implement `DeepResearch` agent (Async Job pattern with partial updates).
+- [ ] Implement **AI Decision Log** (Async write to ClickHouse/BigQuery).
+- [ ] Implement **Internet Search Tool** (Tavily, Google, or Brave Search integration).
+- [ ] Configure **A2A protocol** via Event Bus.
 
 ### 2.2 Supervisor Agent
-- [ ] Implement **Supervisor Agent** (central orchestrator)
-- [ ] Intent classification logic (Tutor, Quiz, Flashcard, Schedule, Search)
-- [ ] Agent handoff coordination
-- [ ] Session state management (ADK session state)
-- [ ] Response aggregation from multiple agents
+- [ ] Implement **Supervisor Agent** (Central Chief of Staff).
+- [ ] Intent classification: route to Synthesis, Search, or Learning agents.
+- [ ] Session state management for multi-hop research tasks.
 
 ### 2.3 Safety Agent (Critical Path)
-- [ ] Implement **Safety Agent** (all outputs route through this)
-- [ ] Medical safety policy engine
-- [ ] Refusal logic for patient-specific queries
-- [ ] Citation verification and uncertainty labeling
-- [ ] PII redaction tools
+- [ ] Implement **Safety Agent** (Mandatory output filter).
+- [ ] Medical safety policy engine (Educational vs Clinical boundaries).
+- [ ] Citation verification for web-sourced results.
 
-### 2.4 Tool Layer Implementation
-- [ ] **Vertex AI Tool**: LLM model access with Gemini
-- [ ] **Vector Search Tool**: RAG retrieval from user uploads
-- [ ] **Citation Tool**: Source linking and verification
-- [ ] **Database Tool**: CRUD operations for PostgreSQL
-- [ ] **File Storage Tool**: Cloudflare R2 or Cloud Storage integration
-- [ ] **Calendar Tool**: ICS export, Google Calendar integration
+### 2.4 Research Tool Layer
+- [ ] **Vertex AI Tool**: LLM model access with multi-provider fallback.
+- [ ] **Deep Research Tool**: Multi-hop web search and synthesis engine.
+- [ ] **Search Tool**: Rapid internet search for factual queries.
+- [ ] **Database Tool**: CRUD for user research history.
+- [ ] **Calendar Tool**: ICS export for study tasks.
 
-### 2.5 API Gateway (Lightweight)
-- [ ] Set up **FastAPI** (Python) or **Express** (Node.js) gateway
+### 2.5 API Gateway (Go)
+- [ ] Set up **Go API Gateway** (using Chi or Gin router).
+- [ ] Implement **Goroutine-based** request handling for high concurrency.
 - [ ] Authentication middleware (JWT, OAuth)
 - [ ] Rate limiting (Redis-backed)
 - [ ] Request routing to ADK agents
@@ -123,219 +131,54 @@ This document outlines the step-by-step execution plan to build MedMentor AI (Fu
 - [ ] Create tables for users, agents, conversations, citations
 - [ ] **AgentConfig** table (for Agent Studio user-created agents)
 - [ ] **AgentExecution** table (for observability)
+- [ ] **HPA Custom Metrics** (Scaling pods based on Event queue depth).
+
 
 ---
 
-## Phase 3: Core Learning Agents (Weeks 5-8)
+## Phase 3: Core Research Agents (Weeks 5-8)
 
-### 3.1 Tutor Agent
-- [ ] Implement **Tutor Agent** with Socratic method
-- [ ] Layered explanation depths (Simple → Student → Clinical)
-- [ ] Analogy and mnemonic generation
-- [ ] Concept linking and cross-references
-- [ ] Streaming response support
+### 3.1 Core Tutor & Pedagogy Agents
+- [ ] Implement **Tutor Agent** (Socratic, Layered explanations).
+- [ ] Implement **Socratic Agent** ("The Attending" - Diagnostic Debrief logic).
+- [ ] Implement **Retrieval Agent** (Web + Library grounding).
+- [ ] Implement **Voice Agent** (Deepgram/ElevenLabs integration for OSCE).
+- [ ] Implement **Vision Agent** (Radiology/Dermatology Analysis).
 
-### 3.2 Retrieval/Citation Agent
-- [ ] Implement **Retrieval Agent** for RAG
-- [ ] Vector search across user uploads and knowledge library
-- [ ] Citation extraction and verification
-- [ ] Source ranking by authority
-- [ ] Context window management
+### 3.2 Assessment & Active Recall Agents
+- [ ] Implement **Quiz Agent** (Distractor rationales, Bloom's taxonomy).
+- [ ] Implement **Flashcard Agent** (Anki-style card generation).
+- [ ] Implement **Simulator Agent** (Patient state machine, vitals tracking).
 
-### 3.3 Quiz Agent
-- [ ] Implement **Quiz Agent** with distractor rationales
-- [ ] Multiple question types (SBA, multiple-correct, extended matching)
-- [ ] Bloom's taxonomy alignment
-- [ ] High-yield takeaway identification
-- [ ] Template library integration
+### 3.3 Study Success Agents
+- [ ] Implement **Planner Agent** (Spaced Repetition Schedule, Calendar Sync).
+- [ ] Implement **UserProfile Agent** (Knowledge Tracing, Adaptive Learning Model).
+- [ ] Implement **Research Agent** (PubMed/Journal Club Helper).
+- [ ] Implement **Format Agent** (Summarizer, PDF/Markdown Converter).
 
-### 3.4 Flashcard Agent
-- [ ] Implement **Flashcard Agent** with SRS data
-- [ ] Card types: basic, cloze, image occlusion
-- [ ] Deduplication logic
-- [ ] Testability verification
-- [ ] SRS parameter calculation (SM-2 or FSRS)
-
-### 3.5 Scheduler Agent
-- [ ] Implement **Scheduler Agent** for adaptive planning
-- [ ] Task generation based on user goals
-- [ ] Workload prediction and burnout prevention
-- [ ] Auto-rescheduling logic
-- [ ] Calendar integration (ICS, Google Calendar)
 
 ---
 
-## Phase 4: Agent Studio (Weeks 9-10)
-
-### 4.1 Agent Builder UI
-- [ ] **YAML Mode**: Code-first agent definition interface
-- [ ] **Visual Builder**: Drag-and-drop agent creation (optional for v0.1)
-- [ ] Instruction builder with templates
-- [ ] Tool selection interface
-- [ ] Data source configuration
-
-### 4.2 Agent Templates
-- [ ] Built-in templates (Specialty Tutor, Quiz Generator, Flashcard Creator)
-- [ ] Template cloning and customization
-- [ ] Template versioning
-
-### 4.3 Agent Testing & Validation
-- [ ] Test chat interface for agent validation
-- [ ] Safety test suite (intent tests, refusal tests)
-- [ ] Performance validation (latency < 5 seconds)
-- [ ] Deployment gates (safety checks, hallucination detection)
-
-### 4.4 Agent Sharing & Marketplace
-- [ ] Agent visibility settings (private, cohort, public)
-- [ ] Agent publishing workflow
-- [ ] Community agent browsing and search
-- [ ] Agent installation (one-click add)
-- [ ] Rating and review system
-- [ ] Version control and rollback
-
----
-
-## Phase 5: Tool Integration & A2A (Weeks 11-12)
-
-### 5.1 MCP Integration (Optional)
-- [ ] MCP server implementation (optional, recommended for extensibility)
-- [ ] MCP tool discovery and registration
-- [ ] Permission management for MCP tools
-- [ ] MCP community tools integration
-
-### 5.2 A2A Remote Agents
-- [ ] **Analytics Agent** deployment (separate server)
-- [ ] **Scheduler Agent** deployment (optional, separate server)
-- [ ] A2A authentication and security
-- [ ] Load balancing and health checks
-- [ ] Circuit breaker implementation
-
-### 5.3 Calendar Integration
-- [ ] ICS export implementation
-- [ ] Google Calendar two-way sync (write-focused)
-- [ ] Privacy level controls (Private vs Detailed)
-
-### 5.4 Search Integration
-- [ ] Full-text search implementation
-- [ ] Multi-language support
-- [ ] Synonym and glossary integration
-
----
-
-## Phase 6: Web Client Implementation (Weeks 13-15)
-    - Auth Guard (JWT verify).
-    - Logging (Start with stdout/Docker logs).
-    - Rate Limiting (Redis-backed).
-    - CORS.
-- [ ] Define Swagger/OpenAPI spec.
-
-### 2.2 User Profile & Settings
-- [ ] Implement `GET /v1/me` and `PATCH /v1/me`.
-- [ ] Implement Preferences Logic:
-    - Language (I18n) storage.
-    - Timezone detection/storage.
-
-### 2.3 Internationalization (I18n) Foundation
-- [ ] Set up `i18next` (or similar) in shared core.
-- [ ] specific locale support (en, es, ar - RTL).
-- [ ] Externalize strings for Error Messages and API Responses.
-
-### 2.4 Billing (Scaffolding)
-- [ ] Integrate Stripe (or equivalent).
-- [ ] Define Products/Plans (Monthly/Yearly).
-- [ ] Implement Webhook handler for subscription updates.
-- [ ] **Nginx Config**: Ensure webhook endpoint is exposed securely.
-- [ ] Database schema for `Subscription` and `Entitlement`.
-
----
-
-## Phase 3: AI & RAG Pipeline (Weeks 5-7)
-
-### 3.1 Upload & Ingestion Pipeline
-- [ ] Implement `POST /v1/uploads`.
-    - Validation (file type, size, quota).
-    - Upload to **Cloudflare R2**.
-- [ ] Create **Background Worker** (BullMQ + Redis on Docker):
-    - Job: `process-document`.
-    - Step 1: Text Extraction (OCR for images/PDFs).
-    - Step 2: Chunking (Recursive character split).
-    - Step 3: Metadata extraction (Title, Page numbers).
-
-### 3.2 Vector Indexing
-- [ ] Implement Embedding generation (OpenAI `text-embedding-3-small` or similar).
-- [ ] Upsert chunks to Vector DB with metadata:
-    - `user_id`, `doc_id`, `chunk_index`, `page_ref`.
-
-### 3.3 AI Orchestrator (The Brain)
-- [ ] Implement **Model Router**:
-    - Select LLM based on task complexity/language (Prioritize strong medical reasoning models).
-- [ ] Create **Tutor Agent** (LLM-First Strategy):
-    - **Primary Source:** Use LLM's internal medical knowledge base.
-    - **Optional Context:** Inject RAG chunks from user uploads *if available*.
-    - System Prompt engineering (Persona, Tone, Socratic method).
-    - Citation formatting logic (distinguish between general medical knowledge and user-provided notes).
-- [ ] Create **Retrieval Agent** (Supplementary):
-    - Logic: Query Rewriting -> Vector Search (Only if user context exists) -> Rerank.
-
-### 3.4 Safety & Guardrails
-- [ ] Implement PII Redaction on ingestion (optional but recommended).
-- [ ] Output Guardrails:
-    - Refusal check (Medical advice / Diagnosis).
-    - "Uncited" warning logic.
-    - Hallucination detection strategy (Self-check prompt).
-
----
-
-## Phase 4: Learning Engine (Weeks 8-9)
-
-### 4.1 Artifact Generation
-- [ ] Implement `generate-flashcards` Job.
-- [ ] Implement `generate-quiz` Job.
-- [ ] Schema:
-    - `Deck`, `Card` (Front/Back/Cloze).
-    - `Quiz`, `Question`, `Distractor` (Rationales).
-
-### 4.2 Spaced Repetition System (SRS)
-- [ ] Implement Scheduling Algorithm (SM-2 or FSRS).
-    - Inputs: `difficulty`, `prev_interval`.
-    - Outputs: `next_review_date`.
-- [ ] Endpoints:
-    - `GET /v1/reviews/due`
-    - `POST /v1/reviews/{cardId}/attempt` (updates schedule).
-
-### 4.3 Mistake Notebook
-- [ ] Logic: Identify "Missed" questions.
-- [ ] Auto-create `MistakeEntry`.
-- [ ] Trigger Remediation Agent (Generate explanation + follow-up card).
-
-### 4.4 Study Scheduler
-- [ ] Tasks Schema (`StudyTask`).
-- [ ] ICS Export utility (`GET /v1/calendar/ics`).
-- [ ] Logic for "Auto-reschedule overdue".
-
----
-
-## Phase 5: Web Client Implementation (Weeks 10-11)
+## Phase 4: Chat-First Web Client (Weeks 9-11)
 
 **Principle:** Mobile-first implementation. Build for small screens first, then enhance for desktop.
 
-### 5.1 App Shell & Navigation
+### 4.1 App Shell & Navigation
 - [ ] mobile-first CSS architecture.
 - [ ] Sidebar/Navbar (Responsive with Bottom Nav for mobile).
 - [ ] Layouts (Dashboard, Focus Mode).
 - [ ] Dark/Light Mode Toggles (Tailwind).
 
-### 5.2 Core Workflows
+### 4.2 Core Workflows
 - [ ] **Onboarding Flow**:
     - Goals, Exam details, Language selection.
-- [ ] **Library View**:
-    - Upload Drag-and-drop.
-    - Document status indicators.
-- [ ] **Tutor Chat Interface**:
-    - Streaming responses.
-    - Citation tooltips (Hover cards).
+- [ ] **Integrated Chat Interface**:
+    - Streaming responses from Research Agents.
+    - Research Drawer for citations and multi-hop synthesis steps.
+- [ ] **Dashboard**:
+    - Research history, streaks, and progress.
 
-### 5.3 Study Interfaces
+### 4.3 Study Interfaces
 - [ ] **Flashcard Runner**:
     - Flip animation (CSS 3D).
     - SRS Feedback buttons (Again/Hard/Good/Easy).
@@ -344,74 +187,102 @@ This document outlines the step-by-step execution plan to build MedMentor AI (Fu
     - Explanation reveal state.
     - "Flag" question feature.
 
-### 5.4 Dashboard
-- [ ] Streak display.
-- [ ] Daily Due chart.
-- [ ] Progress visualizers.
+### 4.4 Offline-First Architecture ("Hospital Mode")
+- [ ] Implement **PowerSync** (Go Service + Client SDK) for robust offline data.
+- [ ] Define **SQLite Local Schema** for Flashcards, Notes, and Profile.
+- [ ] Build **Resilient Retry Queue** for offline actions.
+- [ ] Sync Strategy: Last-Write-Wins for simple data, delta-updates for Study History.
+
+### 4.5 Multiplayer ("Virtual Rounds")
+- [ ] Implement **NATS WebSockets** gateway for real-time signaling.
+- [ ] Build **Session State Manager** (Dragonfly) for shared simulation state.
+- [ ] Frontend: Live user presence and shared patient vitals view.
 
 ---
 
-## Phase 6: Mobile & Extension (Weeks 15-17)
+## Phase 5: Document Ingestion (Additional) (Weeks 12-13)
 
-### 6.1 Mobile App (React Native/Expo) - Full Feature Parity
+### 5.1 Upload & Ingestion Pipeline
+- [ ] Implement `POST /v1/uploads`.
+- [ ] Create **Background Worker** for document processing (OCR, Chunking, etc.).
+
+### 5.2 Vector Indexing
+- [ ] Implement Embedding generation and pgvector storage.
+- [ ] Link user context to the Retrieval Agent for personalized research.
+
+---
+
+## Phase 6: Agent Studio & A2A (Weeks 14-16)
+
+### 6.1 Agent Builder UI
+- [ ] **YAML Mode**: Code-first agent definition interface
+- [ ] Instruction builder with templates
+- [ ] Tool selection interface (Research Tools, Search Tools)
+- [ ] Data source configuration (External URLs, Library Docs)
+
+### 6.2 Agent Templates
+- [ ] Built-in templates (Specialty Tutor, Research Specialist, Case Analyst)
+- [ ] Template cloning and customization
+
+### 6.3 Agent Sharing & Marketplace
+- [ ] Agent visibility settings (private, cohort, public)
+- [ ] Community agent browsing and search
+- [ ] Agent installation (one-click add)
+
+---
+
+## Phase 7: Mobile & Extension (Weeks 17-18)
+
+### 7.1 Mobile App (React Native/Expo) - Full Feature Parity
 - [ ] Setup Navigation (Expo Router).
 - [ ] Screen Parity (All Web Features):
     - Home (Dash).
     - Reviews (SRS Runner - Swipe gestures).
-    - Chat (Tutor).
+    - Chat (Integrated Research Agents).
     - Library Management.
     - Settings & Profile.
-- [ ] Offline Support (WatermelonDB or generic sync).
 - [ ] Push Notifications (Expo Notifications).
 
-### 6.2 Browser Extension
+### 7.2 Browser Extension
 - [ ] Manifest v3 Setup.
 - [ ] Content Script:
     - Highlight medical terms.
-    - "Add to MedMentor" context menu.
+    - "Ask MedMentor Agent" context menu.
 - [ ] Popup:
-    - Quick card add.
-    - Mini Tutor chat.
+    - Mini Chat integrated with Research Agents.
 
 ---
 
-## Phase 7: Optimization & Launch (Week 14)
+## Phase 8: Optimization & Launch (Weeks 19-20)
 
-### 7.1 Security & Compliance
+### 8.1 Institutional Interop (B2B)
+- [ ] Implement **LTI 1.3 Provider** adapter (Go).
+- [ ] Implement **xAPI (Tin Can)** logger for learning events.
+- [ ] Data Export compliance (GDPR/FERPA).
+
+### 8.2 Security & Compliance
 - [ ] Rate Limiting audit.
-- [ ] CORS lock-down.
-- [ ] Data Export (GDPR) testing.
 - [ ] Content Safety (Medical advice) Red-teaming.
 
-### 7.2 Performance
-- [ ] Database Indexing audit.
-- [ ] Bundle size optimization (Lazy loading).
-- [ ] Caching strategy (Redis for hot decks).
+### 8.2 Analytics & Monitoring
+- [ ] Set up Telemetry (PostHog).
+- [ ] AI Evals (Citation accuracy, Search relevance).
 
-### 7.3 Analytics & Monitoring
-- [ ] Set up Telemetry (PostHog - Cloud or Self-hosted).
-- [ ] Server Monitoring (Container metrics / Uptime Kuma).
-- [ ] AI Evals (Citation accuracy).
-
-### 7.4 Final QA & Deployment
+### 8.3 Final QA & Deployment
 - [ ] E2E Testing (Playwright).
-- [ ] Cross-browser / Cross-device testing.
-- [ ] I18n verification (RTL layout check).
 - [ ] **Production Deploy**:
-    - Final `docker-compose.prod.yml` optimization.
-    - Database backup/restore verification.
-    - SSL Certificate auto-renewal check (Certbot).
+    - VPS final optimization and backup verification.
 
 ---
 
 ## Dependencies & Risks
 
 ### Dependencies
-- **LLM API Availability / Cost**: high volume of tokens for RAG.
-- **OCR Accuracy**: Quality of optional uploaded PDFs directly impacts specific context retrieval (but not general knowledge).
-- **Design System Fidelity**: Glassmorphism can be expensive on mobile; requires careful CSS implementation.
+- **LLM API Availability / Cost**: high volume of tokens for research synthesis.
+- **Search API Costs**: Iterative search tasks can scale costs quickly.
+- **Design System Fidelity**: Glassmorphism must be optimized for performance.
 
 ### Key Risks
 - **Hallucinations**: AI inventing medical facts. Implementation of strict Grounding is P0.
-- **Latency**: RAG pipeline can be slow. Needs aggressive caching and streaming.
-- **Data Privacy**: Users uploading patient data. Needs clear disclaimers + Regex/NER scrubbing.
+- **Latency**: Deep research tasks can be slow. Needs aggressive progress tracking and streaming.
+- **Search Accuracy**: Dependence on web-sourced medical information requires high authority ranking.

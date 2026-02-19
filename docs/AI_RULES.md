@@ -204,3 +204,51 @@ agent = LlmAgent(
 ---
 
 ## 8. Development Workflow (Updated)
+
+1.  **Context Discovery:** 
+    *   Review `docs/PRD.md`, `docs/ARCHITECTURE.md`, and `docs/DESIGN.md`.
+    *   Check for existing Knowledge Items (KIs).
+2.  **Skill Application:** Leverage installed Antigravity Skills (`.agent/skills`) and Stitch Skills (`.agents/skills`) for specialized tasks (e.g., `@brainstorming`, `@stitch-loop`, `@enhance-prompt`).
+3.  **Plan:** Create a brief implementation plan for complex features.
+4.  **Implement:** Write clean, tested code following these rules.
+5.  **Verify:**
+    *   Does it meet the design spec?
+    *   Is it responsive/accessible?
+    *   Does it handle errors/loading?
+6.  **Update Docs:** Keeping documentation in sync with code is mandatory.
+
+---
+
+## 9. Antigravity Awesome Skills
+
+The project is enhanced with **Antigravity Awesome Skills**, located in `.agent/skills`. 
+
+### 9.1 Usage Guidelines
+*   **Invocation:** Use the `@skill-name` syntax in prompts to trigger specific workflows.
+*   **Key Skills for MedMentor:**
+    *   `@brainstorming`: Mandatory for new feature designs.
+    *   `@ui-ux-designer`: Use for refining glassmorphism and mobile UI.
+    *   `@ai-engineer`: Use for complex ADK/A2A logic.
+    *   `@test-engineer`: Use for cross-agent evaluation and safety testing.
+*   **Skill Context:** Always refer to the `SKILL.md` within each skill directory for detailed instructions.
+*   **Catalog:** Refer to `.agent/skills/CATALOG.md` for the full list of 864+ available skills.
+
+---
+
+## 10. Stitch Skills
+
+The project is integrated with **Stitch-specific skills** located in `.agents/skills`. These are optimized for high-fidelity web generation and component building.
+
+### 10.1 Key Stitch Skills
+*   `@stitch-loop`: Autonomous, iterative building of complex website features.
+*   `@enhance-prompt`: Upgrades basic UI requests into design-system-aware, high-fidelity prompts.
+*   `@react:components`: Converts Stitch design assets into validated React code.
+*   `@shadcn-ui`: Specialized workflows for integrating and customizing shadcn/ui components.
+*   `@remotion`: Generates walkthrough videos for project demonstrations.
+*   `@design-md`: Synthesizes Stitch projects into semantic design documentation.
+
+---
+
+## 11. Licensing & Proprietary Info
+
+...

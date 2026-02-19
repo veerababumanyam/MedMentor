@@ -16,7 +16,7 @@
 ## 1. Summary
 
 ### 1.1 Vision
-Make medical learning feel less like “drinking from a firehose” by providing a trustworthy, evidence-grounded, personalized study system that turns any curriculum into an adaptive plan: learn → recall → apply clinically.
+Empower medical learners through a **LLM-based, Search-First, AI-driven study system** that uses deep research and internet-connected specialists to turn any query or clinical scenario into an adaptive learning path. While users can ingest their own documents, the core experience is driven by agents that synthesize global medical knowledge into personalized insights.
 
 ### 1.2 Problem statement
 Medical learners face:
@@ -28,16 +28,18 @@ Medical learners face:
 5. **Trust constraints**: incorrect medical info (e.g., dosing) can cause real harm.
 
 ### 1.3 Goals
-* Provide a **personalized learning loop**: explain → quiz → flashcards → schedule → progress insights.
-* Deliver **evidence-linked** outputs with transparent uncertainty.
-* Support **multimodal learning assets** (PDFs, images, audio) within clear IP/usage boundaries.
+* Provide a **research-backed learning loop**: search/query → synthesis → quiz → flashcards → schedule.
+* Deliver **evidence-linked** outputs grounded in real-time internet search and deep research, with transparent uncertainty.
+* Implement a formal **Evidence Hierarchy**: Weight peer-reviewed journals (PubMed, JAMIA) and established guidelines (UpToDate, NICE) higher than general web results.
+* Support **multimodal learning** (PDFs, images, audio) as an enhancement to the core AI-driven research.
 * Achieve **safe-by-design** behavior for medical domains (no patient-specific medical advice).
-* Support **multilingual learning**: English by default with the ability to switch UI and AI outputs to the learner's preferred language.
-* **Agent-first architecture**: All backend capabilities delivered through AI agents using Google ADK with A2A protocol for scalability and modularity.
+* Support **multilingual learning**: AI outputs are translated and grounded in the learner's preferred language.
+* **Agent-First architecture**: A chat-centric frontend integrated with specialized backend AI agents that perform deep research, internet search, and task orchestration.
+* **Offline Resilience (v0.1)**: "Local Cache + Resilient Retry" strategy. Ensure flashcards and recently viewed content are available offline; defer full offline RAG to v0.2.
 
 ### 1.3.1 Agent-First Product Philosophy (NEW)
 
-**Core Philosophy**: MedMentor is built as an AI agent-driven system from the ground up. Every user interaction is handled by specialized AI agents that collaborate through Google's Agent Development Kit (ADK) and Agent-to-Agent (A2A) protocol.
+**Core Philosophy**: MedMentor is built as an AI agent-driven system from the ground up. Every user interaction is handled by specialized AI agents that collaborate through **Google Genkit (Go)** and the Agent-to-Agent (A2A) protocol.
 
 **Key Architectural Principles**:
 
@@ -58,9 +60,10 @@ Medical learners face:
    - Flexibility: Mix local and remote agents seamlessly
    - Security: Authenticated agent-to-agent communication
 
-4. **Agent Studio (v0.1)**: Users can create custom study agents by:
-   - Defining agent role and goals
-   - Selecting tools and data sources
+4. **Agent Studio (v0.1)**: Immersize "Notebook" workspaces. Users upload sources (PDF, text, images) to create dedicated **A2A Specialist Agents**.
+   - Grounded RAG with visual pinpointing (PDF highlights).
+   - "Handy Tools" bar for rapid summarization and clinical correlation.
+   - Admin-led model routing (Gemini 3 Pro / GPT-5).
    - Setting behavior parameters
    - Sharing agents with the community
    - Validating agents before deployment
@@ -68,14 +71,14 @@ Medical learners face:
 5. **Tool Integration**: Native ADK tools with optional MCP (Model Context Protocol) support for extensibility.
 
 ### 1.3.2 Product USP (updated)
-**The first fully interconnected medical brain**: one unified system where *any* learning input (lecture PDF, a missed question, a concept you looked up in a browser, a diagram) becomes connected study assets.
+**The Research-First Medical Brain**: A system where the primary interface is a chat integrated with agents that have real-time access to global medical knowledge via internet search and deep research capabilities. User-provided content (EHRs, notes, PDFs) acts as a contextual layer that enhances the AI's primary research.
 
 Core loop:
-1. Ingest content (upload / paste / browser extension).
-2. Generate assets (summary, mind map, quiz, flashcards, glossary terms).
-3. Practice (quiz + clinical cases).
-4. Auto-remediate (missed concepts → flashcards + targeted re-quizzes).
-5. Schedule and reinforce (spaced repetition + adaptive plan).
+1. **Query & Research**: User input (question, topic, or scenario) triggers deep research and internet search via specialized agents.
+2. **Personalize (Optional Ingestion)**: User can upload sources (PDF, text) or clinical notes to ground the AI's research in their specific curriculum.
+3. **Generate Assets**: AI synthesizes research into summaries, mind maps, quizzes, and flashcards.
+4. **Practice & Remediate**: Practice questions with distractor rationales; focus on gaps via missed-concept remediation.
+5. **Schedule & Reinforce**: Spaced repetition to ensure long-term mastery.
 
 ### 1.4 Non-goals (initially)
 * Diagnosing real patients or offering patient-specific treatment recommendations.
@@ -144,12 +147,15 @@ Multilingual “table stakes”:
 ### 4.1 Must Have v0.1
 
 **Learning core**
-1. AI Tutor Chat (text)
-2. Evidence-linked answers (citations to allowed sources)
-3. Flashcards + spaced repetition queue (native)
-4. Quiz builder (topic-based) + explanations
-5. Study schedule (calendar-like checklist + auto-reschedule)
-6. Upload + “chat with my notes” for *user-provided content* (PDF, DOCX, text)
+1. **AI Agent Chat**: Primary interface integrated with backend research agents
+2. **Deep Research & Internet Search**: Core capability for answering complex medical queries
+3. **Evidence-linked answers**: Citations to real-time web sources and user documents
+4. **Flashcards + spaced repetition queue**: (native)
+5. **Quiz builder**: (topic-based) + explanations
+6. **Study schedule**: (calendar-like checklist + auto-reschedule)
+7. **Document Ingestion (Additional Feature)**: Upload + “chat with my notes” (PDF, DOCX, text)
+8. **Evidence Tier Dashboard**: Visual indicator of search result authority (Level 1: RCT/Meta-analysis → Level 5: Case report/Web).
+9. **Curriculum Mapping**: Grounding research in a specific uploaded syllabus.
 
 **Trust & safety**
 1. “Not medical advice” guardrails + patient-safety refusals
@@ -179,7 +185,7 @@ Multilingual “table stakes”:
 2. Entitlements + quotas (uploads, generations, storage)
 3. Graceful paywalling (no data loss)
 
-**Agent Studio (v0.1 - NEW)**
+**Agent Studio (NEW)**
 1. Custom agent creation interface (YAML or visual builder)
 2. Agent template library for common study workflows
 3. Agent testing and validation before deployment
@@ -559,9 +565,9 @@ Multilingual routing requirements:
 
 ### 6.2 Agent architecture (Google ADK with A2A)
 
-**Framework**: Google Agent Development Kit (ADK) with Agent-to-Agent (A2A) protocol for multi-agent orchestration.
+**Framework**: Google Genkit (Go SDK) with Agent-to-Agent (A2A) protocol for multi-agent orchestration.
 
-**Language Support**: Python, TypeScript, Java, Go (backend teams can choose based on expertise).
+**Language Support**: **Go (Primary)** for high-performance agent orchestration. Python (Secondary) for offline data processing only.
 
 **Core Agent Architecture**:
 
@@ -576,13 +582,21 @@ User Request → API Gateway → Supervisor Agent
 
 | Agent | Role | Tools | Output |
 |-------|------|-------|--------|
-| **Supervisor** | Routes requests, manages handoffs | `transfer_to_agent` (A2A) | Orchestrated response |
-| **Tutor** | Explanations, Socratic method, layered depth | Vertex AI, content tools | `explanation` |
+| **Supervisor** | **High-Level Session Logic**: Language, Track, Preferences, Conversation State, Intent Routing. | `transfer_to_agent` (A2A) | Orchestrated response |
+| **ApiGateway** | **Low-Level Platform**: Auth, Rate Limits, Circuit Breaking, Fan-out. | N/A | Streamed bytes |
+| **Tutor** | Explanations, Socratic method, layered depth | Vertex AI (Go SDK) | `explanation` |
 | **Retrieval** | RAG search, citations, source verification | Vector search, citation tools | `citations` |
 | **Quiz** | Question generation, distractor rationales | Content DB, template tools | `quiz` |
 | **Flashcard** | Card creation, deduplication, SRS data | Content DB, SRS tools | `flashcards` |
+| **Simulator** | Clinical Roleplay, Patient Vitals State Machine | Persona Engine | `simulation_event` |
+| **Socratic** | Diagnostic Debriefing, Counter-factual analysis | Reasoning Engine | `debrief` |
+| **Voice** | Real-time STT/TTS, Interruption Handling | Deepgram, ElevenLabs | `audio_stream` |
+| **Vision** | Image Analysis (Radiology, Dermatology) | Gemini Vision, GPT-4o | `image_analysis` |
+| **Research** | PubMed Scanning, Paper Summarization | PubMed API, Zotero | `paper_summary` |
+| **Planner** | Study Scheduling, Spaced Repetition Logic | Calendar API, SRS Algo | `schedule` |
+| **UserProfile** | Knowledge Tracing, Adaptive Learning Models | Knowledge Graph (Postgres) | `user_state` |
+| **Format** | Content Formatting (Markdown, PDF, SOAP) | Template Engine | `formatted_doc` |
 | **Safety** | Policy enforcement, refusals, redactions | Policy check tools | Validated output |
-| **Scheduler** | Study planning, rescheduling, tasks | Calendar, progress DB | `schedule` |
 | **Analytics** | Progress tracking, recommendations | Progress DB, ML models | `insights` |
 
 **A2A Protocol Benefits**:
@@ -597,7 +611,7 @@ User Request → API Gateway → Supervisor Agent
 3. **Hierarchical**: Supervisor delegates to specialists
 4. **Remote**: A2A protocol for cross-server communication
 
-**ADK Implementation Notes**:
+**Genkit Implementation Notes**:
 - Each agent has: `name`, `instruction`, `tools`, `output_key`
 - State management via ADK session state
 - Streaming responses for real-time user feedback
@@ -638,9 +652,10 @@ Adopt a structured AI risk process aligned to frameworks such as NIST AI RMF:
 * Online monitoring:
   * user-rated helpfulness
   * “report unsafe” rate
-  * response latency
   * hallucination sentinel metrics
   * “high-confidence wrong” sentinel metric (priority-1 incidents)
+  * **AI Decision Log**: Record model name, temperature, tokens, top-k chunks, and final citations for every response. Consolidate in a queryable log store (BigQuery/ClickHouse) for analysis.
+
 
 Release gating requirements:
 * No model/prompt change ships without:
@@ -721,8 +736,14 @@ Additional recommended controls:
 ### 8.1 Data categories
 * Account data (email, auth provider IDs)
 * Learning data (progress, schedules, quizzes)
+* Account data (email, auth provider IDs)
+* Learning data (progress, schedules, quizzes)
 * User content (uploads, notes, flashcards)
 * Telemetry (crash logs, usage events) — opt-in where required
+
+**Data Classification**:
+* Each entity must use a `sensitivity` field: `low` (public/static), `medium` (internal user data), `high` (PII/PHI).
+* Retention policies must be keyed to this classification.
 
 AI-specific data handling:
 * Clearly document whether user content is used for:
@@ -765,7 +786,26 @@ Reinforcement learning (optional / future):
 
 ---
 
-## 9. Integrations and dependencies
+## 10. Non-functional requirements (NFRs)
+
+### 10.1 Scalability & Elasticity
+* **Horizontal Scaling**: The system must support automatic horizontal scaling of Agent pods based on event queue depth and CPU/Memory utilization.
+* **Cold Start Resilience**: Critical agents (Supervisor, Tutor) must maintain a minimum number of replicas to minimize latency during burst traffic.
+* **Queue-Based Smoothing**: Heavy tasks (Deep Research, Document Ingestion) must be decoupled via the Event Bus to prevent front-end timeouts during high load.
+* **Auto-Recovery**: Kubernetes must automatically restart failed Agent pods and ensure 99.9% availability of the Agent layer.
+
+### 10.2 Performance
+* **Agent Response Latency**: Core tutor responses (streaming starts) should target < 2s for initial token generation.
+* **Eventual Consistency**: Non-critical assets (flashcards, quiz rationales) should populate within 10s of ingestion completion.
+* **Database IOPS**: Support for high-concurrency vector searches across millions of grounding chunks.
+
+### 10.3 Reliability
+* **Circuit Breaker Pattern**: If a downstream model provider (Gemini/OpenAI) or a tool (Search API) fails, the system must degrade gracefully (e.g., fallback to cached results or local grounding).
+* **Dead Letter Queues (DLQ)**: Failed agent events must be persisted for manual audit and retriability.
+
+---
+
+## 11. Integrations and dependencies
 
 ### 9.0 Integration principles (student-first)
 Integrations should reduce friction in the **daily study loop** (plan → do → review), without increasing privacy risk or operational complexity.
@@ -1184,5 +1224,59 @@ Privacy, security, risk:
 * FTC Health Breach Notification Rule (FTC): https://www.ftc.gov/business-guidance/resources/health-breach-notification-rule
 * NIST AI Risk Management Framework (NIST): https://www.nist.gov/itl/ai-risk-management-framework
 * EU GDPR business rules (European Commission): https://ec.europa.eu/commission/priorities/justice-and-fundamental-rights/data-protection/2018-reform-eu-data-protection-rules_en
+
+---
+
+## 18. Future Roadmap (v2.0): The Futuristic Medical Brain
+
+To move beyond state-of-the-art and become a truly "futuristic" extension of the medical mind, MedMentor will evolve into an **Immersive, Bio-Adaptive, and Ambient Intelligence** system.
+
+### 18.1 Pillar 1: Bio-Adaptive Learning ("The Quantified Student")
+**Concept**: Shift from calendar-based scheduling to *biology-based* orchestration.
+*   **Integration**: Ingest real-time data from wearables (Apple Watch, Oura, Whoop) via HealthKit/Google Fit.
+*   **Behavior**:
+    *   **High Stress / Low HRV**: Agent activates "Passive Review Mode" (audio podcasts, simple flashcards) to prevent burnout.
+    *   **Peak Focus**: Agent activates "Challenge Mode" (complex diagnostic riddles, timed simulations) when neuroplasticity is optimal.
+
+### 18.2 Pillar 2: Spatial & Immersive Computing
+**Concept**: Move beyond 2D flat screens for complex anatomical and biochemical systems.
+*   **"Sherlock Mode" (AR)**: Use mobile/glass cameras to overlay dynamic labels, pathology notes, and "Deep Search" buttons onto physical textbooks, cadavers, or skeletal models.
+*   **Interactive 3D**: deeply integrated 3D models (heart, brain, molecular structures) that users can manipulate, dissect, and "chat with" in spatial environments (Vision Pro/Meta Quest).
+
+### 18.3 Pillar 3: Edge AI & "Zero-Latency" Trust
+**Concept**: Hybrid Local-First Intelligence for privacy and speed.
+*   **On-Device Tutor**: Run quantized models (e.g., Gemini Nano, Llama-Medical-8B) locally on the device.
+*   **Benefits**:
+    *   **0ms Latency** for basic factual queries ("What's the mechanism of Aspirin?").
+    *   **Privacy Seal**: Guarantees that sensitive or embarrassing questions never leave the device.
+    *   **Seamless Handover**: Local agent seamlessly escalates to Cloud Supervisor only when deep research or swarm consensus is needed.
+
+### 18.4 Pillar 4: The Collaborative "Agent Swarm"
+**Concept**: Agents evolve from isolated tools to collaborative councils.
+*   **Consult Board**: For complex cases, the Supervisor spawns specialized sub-agents (e.g., "The Conservative Cardiologist" vs. "The Experimental Oncologist") to *debate* the case in a side-channel before synthesizing a balanced recommendation.
+*   **Marketplace**: Allow institutions (e.g., "Stanford Medical Agent") to publish official, curriculum-aligned agents.
+
+### 18.5 Student-Centric Feature Suite (Priority)
+Features specifically targeting retention, clinical skills, and exam stress.
+
+#### 18.5.1 Neuro-Flashcards (Bio-Adaptive Retention)
+*   **Problem**: Subjective "Easy/Hard" grading in Anki is unreliable.
+*   **Solution**: Use pupillometry (Vision Pro) and gaze tracking (Webcam) to measure cognitive load. High dilation = Hard card. The system auto-grades retention based on biological effort, not user opinion.
+
+#### 18.5.2 The OSCE Dojo (Agent Swarm)
+*   **Problem**: Students lack safe practice partners for clinical roleplay.
+*   **Solution**: A multi-agent simulation where a "Patient Agent" (emotional, voice-enabled) interacts with the student, interrupted by a "Nurse Agent", while an invisible "Evaluator Agent" grades empathy and diagnostics.
+
+#### 18.5.3 The Memory Palace (Spatial AR)
+*   **Problem**: Memorizing dry lists (e.g., pancreatitis causes) is difficult.
+*   **Solution**: AR overlays that place virtual medical anchors (e.g., a gallstone) onto the user's *real* furniture (couch). The student memorizes by walking through their physical room.
+
+#### 18.5.4 Just-in-Time Mnemonics (personalized)
+*   **Problem**: Generic mnemonics don't stick.
+*   **Solution**: Generative Mnemonics overlaid on user interests (e.g., "Explain Krebs Cycle using Game of Thrones terminology").
+
+#### 18.5.5 Exam Simulator: Adrenaline Mode
+*   **Problem**: Exam panic reduces IQ despite preparation.
+*   **Solution**: Stress Inoculation. If Apple Watch detects low HRV (calmness) during a practice exam, the Agent *increases* difficulty and ambient distractions to train performance under pressure.
 
 

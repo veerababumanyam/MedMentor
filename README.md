@@ -7,100 +7,67 @@
 [![Project Status: Alpha](https://img.shields.io/badge/Status-Alpha-orange.svg)](#)
 [![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red.svg)](#)
 [![Framework: Next.js](https://img.shields.io/badge/Framework-Next.js-blue.svg)](#)
-[![AI: Google ADK](https://img.shields.io/badge/AI-Google_ADK-green.svg)](#)
+[![Backend: Go](https://img.shields.io/badge/Backend-Go_1.26+-00ADD8.svg)](#)
+[![AI: Google ADK + Genkit](https://img.shields.io/badge/AI-ADK_%26_Genkit-green.svg)](#)
 
-> **Vision:** Turning medical "information overload" into a trustworthy, evidence-grounded, and personalized learning experience.
+> **Vision:** Empowering medical learners through an autonomous, multimodal, and research-first agent ecosystem that turns global knowledge into personalized mastery.
 
-MedMentor AI is a next-generation medical education platform that transforms dense curricula into adaptive study plans. Built with an **agent-first architecture**, it connects every piece of information—from lecture PDFs to clinical cases—into a unified, intelligent knowledge network.
+MedMentor AI is a production-grade medical education platform built on a **Hybrid Agent Architecture**. It prioritizes real-time **SOTA Intelligence** (Internet Search + Gemini 3/GPT-5) as its primary knowledge source, using personal documents as a contextual refinement layer.
 
 ---
 
 ## ✨ Core Pillars
 
-### 1. The Interconnected Brain
-MedMentor isn't just a document storage tool. It's a system where every upload (PDF, DOCX, Image) is analyzed and cross-linked. A concept mentioned in a lecture becomes a flashcard, which links to a quiz, which links back to a source-cited explanation.
+### 1. Research-First Intelligence
+Unlike generic RAG apps, MedMentor treats the internet as its primary textbook. Agents perform deep research across verified medical sources (PubMed, Guidelines) before synthesizing answers, ensuring information is current and evidence-based.
 
-### 2. Agent-First Architecture
-Powered by **Google Agent Development Kit (ADK)** and the **Agent-to-Agent (A2A) protocol**, MedMentor uses a swarm of specialized AI agents:
-- **Supervisor:** Orchestrates requests and manages agent handoffs.
-- **Tutor:** Provides layered, Socratic explanations (Simple → Student → Clinical).
-- **Retrieval (RAG):** Grounds every claim in trustworthy evidence with non-fabricated citations.
-- **Safety:** Enforces medical guidelines and patient safety (Not a diagnostic tool).
+### 2. The 14-Agent Swarm (Google ADK)
+Powered by **Google ADK (Go)** and **Genkit**, MedMentor utilizes a mesh of specialized agents interacting via the A2A (Agent-to-Agent) protocol:
 
-### 3. Precision Design
-Implementing **Liquid Glassmorphism**, MedMentor provides an immersive, "iOS-grade" experience. The UI is designed to feel alive, using deep backdrop blurs, animated mesh backgrounds, and 4px grid precision to reduce cognitive load during intense study sessions.
+| Agent Category | Agents |
+|:--- | :--- |
+| **Orchestration** | **Supervisor** (Routing), **ApiGateway** (Platform Context) |
+| **Logic & Pedagogy** | **Tutor** (Socratic), **Socratic** (Stimulated Attending/Pimping) |
+| **Knowledge** | **Retrieval** (Web Search/RAG), **Research** (Journal Club/PubMed), **Ingestion** (Doc Parser) |
+| **Practice** | **Simulator** (Patient Vitals), **Quiz** (Assessment), **Flashcard** (Anki Gen) |
+| **Multimodal** | **Voice** (OSCE/Speech), **Vision** (Radiology/Dermatology) |
+| **Success** | **Planner** (Scheduling), **UserProfile** (Adaptive Learning Graph) |
+| **Governance** | **Safety** (Policy Enforcement), **Format** (SOAP Notes/Summaries) |
+
+### 3. Enterprise-Ready Architecture
+- **Offline-First ("Hospital Mode")**: Critical data (flashcards, notes) syncs via **PowerSync** to a local **SQLite** DB for use in low-connectivity areas.
+- **Multiplayer ("Virtual Rounds")**: Real-time collaborative clinical simulations powered by **NATS WebSockets**.
+- **Institutional Interop**: Support for **LTI 1.3** and **xAPI** to integrate with University LMSs.
+
+---
+
+## 🏗️ Technical Stack (2026 Standards)
+
+- **Frontend**: Next.js 15, React Native (Expo), Chrome Extension.
+- **Agent Mesh**: **Go 1.26+**, **Google ADK**, **NATS JetStream** (A2A Protocol).
+- **Cognitive Engine**: **Google Genkit (Go)**, Vertex AI (Gemini 3), OpenRouter, Ollama.
+- **Vector Infrastructure**: **Milvus 3.0** (Partitioned Tenant Isolation).
+- **Persistence**: **PostgreSQL 18** (Relational), **Dragonfly** (Session Cache), **MinIO** (Global Static Assets).
+- **Secrets Management**: **HashiCorp Vault** (Encrypted BYOK storage).
 
 ---
 
 ## 🚀 Key Features
 
-- **🧠 AI Tutor Chat:** Real-time deeply grounded medical tutoring with depth-on-demand.
-- **📝 Automated Asset Generation:** Instantly turn your notes into summaries, hierarchical outlines, and mind maps.
-- **🃏 Smart Flashcards (SRS):** Native spaced-repetition system supporting Cloze, Image Occlusion, and Anki-compatible exports.
-- **📊 Adaptive Quizzes:** Topic-based quiz builder with exhaustive distractor rationales—understand *why* an answer is wrong.
-- **📓 Mistake Notebook:** Automatically tracks missed questions and generates targeted remediation packages.
-- **📅 Smart Scheduler:** A calendar-driven study plan that auto-reschedules when life happens, with burnout protection built-in.
-- **🧪 Agent Studio:** Create, test, and share custom study agents tailored to specific medical specialties or exams.
+- **🧠 Socratic Tutoring**: Layered explanations that adapt to your knowledge level.
+- **🎙️ OSCE Simulations**: Real-time voice interaction with virtual patients.
+- **🩻 Clinical Vision**: Analyze radiology and dermatology cases with VLM-powered agents.
+- **📅 Adaptive Planning**: A scheduler that traces your "Knowledge Graph" and builds schedules for USMLE/PLAB based on your weaknesses.
+- **🛠️ Agent Studio**: Build and share your own specialized agents for specific medical rotations.
 
 ---
 
-## 🏗️ Technical Stack
+## 🛡️ Trust & Safety
 
-- **Frontend:** Next.js (Web), Cross-platform Mobile (iOS/Android), Chrome/Edge Extension.
-- **AI Core:** Google ADK, Vertex AI (Gemini), LiteLLM (Fallback Router).
-- **Backend:** Python (FastAPI) / TypeScript (Express) with A2A Protocol for distributed agents.
-- **Database:** PostgreSQL with `pgvector` for semantic search and RAG.
-- **Storage:** Cloudflare R2 / Google Cloud Storage for medical assets.
-- **Auth:** OAuth 2.0 (Google, Apple, Microsoft) with cross-device session syncing.
-
----
-
-## 🛠️ Getting Started
-
-### Prerequisites
-- Node.js 18+
-- Python 3.10+ (for agent backend)
-- PostgreSQL with `pgvector`
-- Google Cloud Project with Vertex AI enabled
-
-### Installation (Dev Environment)
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/veerababumanyam/MedMentor.git
-   cd MedMentor
-   ```
-
-2. **Setup Frontend:**
-   ```bash
-   npm install
-   npm run dev
-   ```
-
-3. **Setup Agent Backend:**
-   ```bash
-   cd backend
-   pip install -r requirements.txt
-   python main.py
-   ```
-
-*(Detailed setup instructions can be found in `docs/ADK_SETUP.md`)*
-
----
-
-## 🗺️ Roadmap
-
-- **v0.1:** Core Learning Loop (Tutor, Quiz, Cards, Scheduler).
-- **v0.2:** Browser Extension & Community Hub (Collaborative Decks).
-- **v0.3:** Voice-based Virtual Patient & Clinical "Grill Mode" simulation.
-
----
-
-## 🛡️ Trust, Safety & Compliance
-
-MedMentor AI is designed as a **strictly educational tool**.
-- **Not Medical Advice:** The system refuses to provide patient-specific diagnosis or treatment.
-- **Evidence Labeling:** Qualitative confidence levels (High/Medium/Low) provided for all AI claims.
-- **Privacy by Design:** HIPAA-aligned data handling and encryption at rest/transit.
+MedMentor AI adheres to strict medical safety guardrails:
+- **Strictly Educational**: Refuses case-specific diagnosis or treatment for real patients.
+- **Evidence Labeling**: Interactive confidence signals and direct citations for every fact.
+- **HIPAA Aligned**: End-to-end encryption for all personal study materials and notes.
 
 ---
 
@@ -109,4 +76,4 @@ MedMentor AI is designed as a **strictly educational tool**.
 Proprietary. All rights reserved by **Veera Babu Manyam**.
 
 ---
-*Developed with ❤️ for medical learners worldwide.*
+*Developed with ❤️ for the next generation of physicians.*

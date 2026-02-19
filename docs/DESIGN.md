@@ -10,7 +10,7 @@
 
 ### 1.1 Core Concept
 **"The Interconnected Medical Brain"**
-MedMentor AI transforms the overwhelming flood of medical information into a structured, interconnected network of knowledge. The design must feel **intelligent**, **trustworthy**, and **alive** — reflecting a system that actively learns alongside the user.
+MedMentor AI transforms the overwhelming flood of medical information into a structured, interconnected network of knowledge. Powered by **Deep Research AI Agents**, the system synthesizes global medical insights in real-time, allowing users to query any medical topic or clinical scenario. Document ingestion (EHRs, notes, PDFs) acts as an additive feature to further personalize and ground the AI's research in specific curricula.
 
 **Personalized Greeting Pattern:**
 "Good Morning, [Name]. Your brain is ready for new connections." — Emphasizes the partnership between the user and the AI.
@@ -217,6 +217,16 @@ A signature animated gradient overlay that simulates light passing across a glas
 *   **Gradient angle:** 135deg diagonal sweep.
 *   **Animation:** `shineSlide`, 6s ease-in-out infinite.
 *   **Peak opacity:** 8% (`rgba(255,255,255,0.08)`) to maintain subtlety.
+
+### Immersive Study Workspace (Agent Studio)
+- **Agent-First Layout**:
+-    - **Center**: Dynamic AI Chat Integrated with Deep Research Specialists (Primary focus).
+-    - **Left**: Collapsible Source Library (Document ingestion as an additive feature).
+-    - **Right**: Collapsible "Research Drawer" (Citations, Tools, and Synthesis).
+- **Research Breadcrumbs**: A dynamic progress UI element showing the agent's research steps (e.g., "Scanning NEJM..." → "Extracting RCT data..." → "Synthesizing...").
+- **Evidence Badge System**: Color-coded badges (Gold/Silver/Bronze) indicating the evidence tier of a response.
+- **Visual Pinpointing**: AI citations from both internet sources and uploaded documents must trigger visual highlights or link-outs.
+- **Responsive Behavior**: Sidebars collapse to allow for a focused chat experience on small screens.
 
 ### 5.3 Animated Background Orbs
 Floating radial gradient orbs create a living, breathing canvas behind glass surfaces. Three orbs with different colors, sizes, and animation timings prevent visual repetition.
@@ -601,3 +611,25 @@ Use this checklist when building new screens or components to ensure design syst
 8.  Focus rings visible on all buttons, inputs, and interactive elements.
 9.  Dropdowns use custom glass-elevated panels, not native browser selects (except in form contexts).
 10. Modals use bottom-sheet pattern on mobile with drag handle.
+
+---
+
+## 15. Future Spatial Design (v2.0)
+
+As MedMentor moves to "Sherlock Mode" (AR) and Vision Pro, the design system extends beyond 2D:
+
+### 15.1 Spatial Glass (Z-Depth)
+*   **Layer 0 (Reality)**: The physical world (textbook, patient model).
+*   **Layer 1 (Ambient)**: "Glass" panels floating 1m away (Notes, simple Q&A).
+*   **Layer 2 (Focus)**: Interactive 3D models (Hearts, Molecules) instantiated 0.5m away for manipulation.
+
+### 15.2 Ambient Interactions
+*   **Gaze-Driven**: UI elements expand slightly when looked at (Eye tracking).
+*   **Air Gestures**: "Pinch to extract" text from a physical book into the digital notebook.
+*   **Bio-Feedback UI**: The interface "breathes" (subtle pulse animation) to match the user's stress level, guiding them to calmness.
+*   **Bio-Feedback UI**: The interface "breathes" (subtle pulse animation) to match the user's stress level, guiding them to calmness.
+
+### 15.3 Immersive Learning UI (Student Features)
+*   **OSCE Mode**: Minimalist UI. "Voice-first" interaction. The patient is a full-screen video avatar (or 3D model). Design must hide all text prompts to force active recall.
+*   **Memory Palace**: World-scale AR. Labels must use **billboarding** (always face user) and maintain legibility against variable real-world backgrounds (dynamic contrast/shadows).
+*   **Neuro-Flashcards**: Invisible UI. No "grade yourself" buttons. The card simply *knows* and swipes itself away when mastery is detected.
