@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="public/logo.png" alt="MedMentor AI Logo" width="200" />
+</p>
+
 # 🩺 MedMentor AI - The Interconnected Medical Brain
 
 [![Project Status: Alpha](https://img.shields.io/badge/Status-Alpha-orange.svg)](#)
